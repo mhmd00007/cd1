@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Birthday!</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+
+    h1 {
+      font-size: 60px;
+      color: #fff;
+      text-shadow: 2px 2px #ff4081, -2px -2px #ffcc00;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .balloon {
+      position: absolute;
+      bottom: -150px;
+      width: 50px;
+      height: 70px;
+      background: red;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      animation: floatUp 10s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% {
+        bottom: -150px;
+        opacity: 0;
+        transform: translateX(0);
+      }
+      50% {
+        opacity: 1;
+        transform: translateX(30px);
+      }
+      100% {
+        bottom: 100%;
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+    }
+
+    .balloon::after {
+      content: "";
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      width: 2px;
+      height: 20px;
+      background: black;
+      transform: translateX(-50%);
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+  <h1>🎉 Happy Birthday! 🎂</h1>
+
+  <!-- Balloons -->
+  <div class="balloon" style="left: 10%; background: #ff4d4d;"></div>
+  <div class="balloon" style="left: 30%; background: #ffcc00;"></div>
+  <div class="balloon" style="left: 50%; background: #66ff66;"></div>
+  <div class="balloon" style="left: 70%; background: #66b3ff;"></div>
+  <div class="balloon" style="left: 90%; background: #cc99ff;"></div>
+
+  <script>
+    // Confetti animation
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    let W = window.innerWidth;
+    let H = window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
+
+    let confetti = [];
+    for(let i = 0; i < 100; i++) {
+      confetti.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * 10 + 5,
+        color: hsl(${Math.random() * 360}, 100%, 50%),
+        tilt: Math.random() * 10 - 10
+      });
+    }
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, W, H);
+      for(let i = 0; i < confetti.length; i++) {
+        let p = confetti[i];
+        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2, true);
+        ctx.fill();
+      }
+      updateConfetti();
+    }
+
+    function updateConfetti() {
+      for(let i = 0; i < confetti.length; i++) {
+        let p = confetti[i];
+        p.y += Math.cos(p.d) + 1 + p.r/2;
+        p.x += Math.sin(p.d);
+
+        if(p.y > H) {
+          confetti[i] = {
+            x: Math.random() * W,
+            y: -10,
+            r: p.r,
+            d: p.d,
+            color: p.color,
+            tilt: p.tilt
+          };
+        }
+      }
+    }
+
+    setInterval(drawConfetti, 33);
+  </script>
+</body>
+</html>
